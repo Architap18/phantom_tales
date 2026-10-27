@@ -19,11 +19,29 @@ const fearDescriptions = {
   high: 'intense psychological horror, a terrifying atmosphere, and a disturbing ending without excessive gore',
 };
 
+
+const allowedOrigins = [
+  'https://phantomtales.vercel.app',
+  'http://localhost:5174',
+  'http://localhost:5173',
+];
+
 app.use(
   cors({
-    origin: 'http://localhost:5174',
+    origin(origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      console.error('CORS blocked origin:', origin);
+      return callback(new Error('Origin not allowed by CORS'));
+    },
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
+
+app.use(express.json({ limit: '10kb' }));
 
 app.use(express.json({ limit: '10kb' }));
 
