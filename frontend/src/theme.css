@@ -1,0 +1,562 @@
+
+:root {
+  --purple: #bd83ff;
+  --purple-light: #ddaaff;
+  --pink: #f04483;
+  --text: #f5f0ff;
+  --muted: #b8adc9;
+  --panel: rgba(7, 7, 15, 0.91);
+  --line: rgba(190, 132, 255, 0.2);
+}
+
+body {
+  color: var(--text);
+  background: #05040b;
+}
+
+.app-container {
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+  width: 100%;
+  overflow: clip;
+  background:
+    linear-gradient(180deg, rgba(4, 3, 10, 0.35), rgba(4, 3, 10, 0.88)),
+    url("/spooky_background.jpg") center top / cover fixed,
+    #05040b;
+}
+
+.app-container::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 75% 8%, rgba(119, 38, 108, 0.2), transparent 38%),
+    linear-gradient(90deg, rgba(3, 3, 10, 0.4), transparent 75%);
+}
+
+.site-header {
+  width: 100%;
+  min-height: 76px;
+  padding: 14px clamp(20px, 5vw, 76px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  background: rgba(4, 4, 12, 0.82);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(16px);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--purple-light);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(22px, 2.2vw, 32px);
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.brand-ghost {
+  filter: drop-shadow(0 0 12px rgba(198, 127, 255, 0.75));
+}
+
+.site-nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(16px, 3vw, 42px);
+}
+
+.site-nav a {
+  color: #d7c7f2;
+  text-decoration: none;
+  font-size: 15px;
+  transition: color 0.2s ease;
+}
+
+.site-nav a:hover {
+  color: #ff779e;
+}
+
+.hero {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: clamp(40px, 6vw, 72px) 20px 36px;
+  text-align: center;
+}
+
+.hero-ghost {
+  font-size: 48px;
+  line-height: 1.2;
+  filter: drop-shadow(0 0 18px rgba(208, 131, 255, 0.9));
+  animation: ghost-float 4s ease-in-out infinite;
+}
+
+.eyebrow {
+  margin: 20px 0 10px;
+  color: var(--purple);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+}
+
+.hero h1 {
+  margin: 0;
+  color: #ffe0e7;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(44px, 7vw, 82px);
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  text-shadow: 0 0 22px rgba(247, 83, 142, 0.28);
+}
+
+.hero-subtitle {
+  margin: 15px 0 0;
+  color: #e8d7ff;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: clamp(15px, 2vw, 21px);
+}
+
+.hero-description {
+  margin: 13px 0 0;
+  color: #c8bed9;
+  font-size: 15px;
+}
+
+.main-content {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  align-items: stretch;
+  gap: 20px;
+  width: min(1200px, calc(100% - 48px));
+  margin: 0 auto;
+}
+
+.panel {
+  min-width: 0;
+  padding: clamp(20px, 3vw, 30px);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.32);
+  backdrop-filter: blur(14px);
+}
+
+.panel h2 {
+  margin: 0 0 24px;
+  color: var(--purple);
+  text-align: center;
+  font-size: 19px;
+  font-weight: 650;
+}
+
+.form-group {
+  margin-bottom: 22px;
+}
+
+.form-group > label,
+.fear-group legend {
+  display: block;
+  margin-bottom: 9px;
+  color: #eee6fb;
+  font-size: 14px;
+  font-weight: 550;
+}
+
+.form-group input {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 46px;
+  padding: 12px 14px;
+  color: white;
+  background: rgba(23, 18, 35, 0.92);
+  border: 1px solid #8e61c9;
+  border-radius: 9px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input::placeholder {
+  color: #92859f;
+}
+
+.form-group input:focus {
+  border-color: #e0adff;
+  box-shadow: 0 0 0 3px rgba(188, 131, 255, 0.13);
+}
+
+.field-hint {
+  margin: 7px 0 0;
+  color: #a99bbd;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.fear-group {
+  min-width: 0;
+  margin: 0 0 22px;
+  padding: 0;
+  border: 0;
+}
+
+.fear-group legend {
+  padding: 0;
+}
+
+.fear-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.fear-card {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  min-height: 96px;
+  padding: 13px 7px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  color: #e6ddf3;
+  background: rgba(22, 18, 33, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, transform 0.2s;
+}
+
+.fear-card:hover {
+  transform: translateY(-2px);
+}
+
+.fear-card.selected {
+  background: rgba(39, 27, 51, 0.95);
+  border-color: #ff8e72;
+  box-shadow: 0 0 17px rgba(255, 115, 100, 0.16);
+}
+
+.fear-card input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.fear-card:focus-within {
+  outline: 2px solid var(--purple-light);
+  outline-offset: 2px;
+}
+
+.fear-indicator {
+  width: 9px;
+  height: 9px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+}
+
+.fear-card.green .fear-indicator {
+  background: #35d28b;
+}
+
+.fear-card.orange .fear-indicator {
+  background: #ffb347;
+}
+
+.fear-card.red .fear-indicator {
+  background: #ff4267;
+}
+
+.fear-title {
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.fear-subtitle {
+  color: #b6a9c9;
+  font-size: 12px;
+}
+
+.generate-btn {
+  display: flex;
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 18px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: white;
+  background: linear-gradient(110deg, #e64e60, #b62c70);
+  border: 1px solid rgba(255, 156, 186, 0.45);
+  border-radius: 10px;
+  box-shadow: 0 7px 25px rgba(188, 38, 103, 0.2);
+  font-weight: 700;
+  transition: filter 0.2s, transform 0.2s;
+}
+
+.generate-btn:hover:not(:disabled) {
+  filter: brightness(1.13);
+  transform: translateY(-1px);
+}
+
+.generate-btn:disabled {
+  opacity: 0.7;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+.error-msg {
+  margin: 14px 0 0;
+  color: #ff7584;
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.story-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.story-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 17px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.story-header h2 {
+  margin: 0;
+  text-align: left;
+}
+
+.copy-btn {
+  flex: 0 0 auto;
+  padding: 9px 13px;
+  color: #eee4ff;
+  background: rgba(30, 25, 42, 0.95);
+  border: 1px solid rgba(196, 151, 255, 0.25);
+  border-radius: 9px;
+  font-size: 13px;
+}
+
+.copy-btn:hover:not(:disabled) {
+  border-color: var(--purple);
+}
+
+.copy-btn:disabled {
+  opacity: 0.5;
+}
+
+.example-label {
+  align-self: flex-start;
+  margin: 16px 0 0;
+  padding: 5px 8px;
+  color: #d8baff;
+  background: rgba(168, 104, 255, 0.1);
+  border-radius: 5px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+
+.story-content {
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 20px 0 8px;
+}
+
+.story-content h3 {
+  margin: 4px 0 0;
+  color: #f5b8f4;
+  text-align: center;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(24px, 3vw, 34px);
+  text-shadow: 0 0 18px rgba(210, 103, 255, 0.25);
+}
+
+.story-divider {
+  margin: 13px 0 25px;
+  color: var(--purple);
+  text-align: center;
+}
+
+.story-text {
+  color: #eee8f4;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 14px;
+  line-height: 1.9;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.copy-message {
+  margin-top: 14px;
+  color: #c9a5ff;
+  font-size: 13px;
+}
+
+.suggestions {
+  width: min(1200px, calc(100% - 48px));
+  margin: 25px auto 0;
+  padding-bottom: 28px;
+}
+
+.suggestions > p {
+  margin: 0 0 14px;
+  color: var(--purple);
+  font-size: 14px;
+}
+
+.suggestion-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.suggestion-chip {
+  padding: 10px 14px;
+  color: #e1d1f5;
+  background: rgba(23, 18, 35, 0.94);
+  border: 1px solid rgba(190, 132, 255, 0.23);
+  border-radius: 999px;
+  font-size: 13px;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.suggestion-chip:hover {
+  background: rgba(91, 48, 123, 0.55);
+  border-color: var(--purple);
+}
+
+.site-footer {
+  padding: 18px 20px 24px;
+  color: #9889aa;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  text-align: center;
+  font-size: 12px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes ghost-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@media (min-width: 1500px) {
+  .main-content,
+  .suggestions {
+    width: min(1320px, calc(100% - 80px));
+  }
+}
+
+@media (max-width: 850px) {
+  .site-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .site-nav {
+    flex-wrap: wrap;
+    gap: 18px;
+  }
+
+  .main-content {
+    grid-template-columns: minmax(0, 1fr);
+    width: min(680px, calc(100% - 32px));
+  }
+
+  .suggestions {
+    width: min(680px, calc(100% - 32px));
+  }
+}
+
+@media (max-width: 480px) {
+  .site-header {
+    padding: 15px 18px;
+  }
+
+  .site-nav {
+    width: 100%;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .site-nav a {
+    font-size: 13px;
+  }
+
+  .hero {
+    padding: 34px 16px 26px;
+  }
+
+  .eyebrow {
+    font-size: 9px;
+    letter-spacing: 0.12em;
+  }
+
+  .main-content {
+    width: calc(100% - 24px);
+    gap: 14px;
+  }
+
+  .panel {
+    padding: 18px 15px;
+    border-radius: 15px;
+  }
+
+  .fear-options {
+    gap: 6px;
+  }
+
+  .fear-card {
+    min-height: 92px;
+    padding: 10px 3px;
+  }
+
+  .fear-title {
+    font-size: 12px;
+  }
+
+  .fear-subtitle {
+    font-size: 11px;
+  }
+
+  .suggestions {
+    width: calc(100% - 24px);
+  }
+
+  .suggestion-list {
+    gap: 8px;
+  }
+
+  .suggestion-chip {
+    font-size: 12px;
+    padding: 9px 11px;
+  }
+
+  .story-text {
+    font-size: 12px;
+    line-height: 1.8;
+  }
+}
