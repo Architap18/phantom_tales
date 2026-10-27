@@ -2,10 +2,12 @@
 import { useState } from 'react';
 import './theme.css';
 
+const API_URL = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '');
+
 const fearOptions = [
   { value: 'mild', label: 'Mild', subtitle: 'Chilling', color: 'green' },
   { value: 'moderate', label: 'Moderate', subtitle: 'Creepy', color: 'orange' },
-  { value: 'high', label: 'High', subtitle: 'Terrifying', color: 'red' }
+  { value: 'high', label: 'High', subtitle: 'Terrifying', color: 'red' },
 ];
 
 const suggestions = [
@@ -13,7 +15,7 @@ const suggestions = [
   'A mysterious train',
   'An abandoned school',
   'A small town',
-  'A mirror that talks'
+  'A mirror that talks',
 ];
 
 const sampleStory = {
@@ -24,7 +26,7 @@ At 3:04 AM, the footsteps stopped outside my door. When I peeked through the gap
 
 The next morning, I checked the room number again.
 
-There was no Room 304 in this building.`
+There was no Room 304 in this building.`,
 };
 
 async function readJsonResponse(response) {
@@ -32,7 +34,7 @@ async function readJsonResponse(response) {
 
   if (!text.trim()) {
     throw new Error(
-      `The server returned an empty response (HTTP ${response.status}). Check the backend and Vite proxy.`
+      `The server returned an empty response (HTTP ${response.status}).`
     );
   }
 
@@ -42,12 +44,14 @@ async function readJsonResponse(response) {
     data = JSON.parse(text);
   } catch {
     throw new Error(
-      `The server returned a non-JSON response (HTTP ${response.status}). Check the backend URL and terminal logs.`
+      `The server returned a non-JSON response (HTTP ${response.status}). Check the backend URL and deployment logs.`
     );
   }
 
   if (!response.ok) {
-    throw new Error(data.message || `Request failed with HTTP ${response.status}.`);
+    throw new Error(
+      data.message || `Request failed with HTTP ${response.status}.`
+    );
   }
 
   return data;
@@ -73,16 +77,19 @@ export default function PhantomApp() {
       return;
     }
 
+    if (!API_URL) {
+      setError(
+        'Backend URL is not configured. Set VITE_API_URL in Vercel and redeploy the frontend.'
+      );
+      return;
+    }
+
     setLoading(true);
 
     try {
-        const API_URL = import.meta.env.VITE_API_URL;
-
-        if (!API_URL) {
-          throw new Error('Backend URL is not configured.');
-        }
-
-        const response = await fetch(`${API_URL}/api/stories/generate`, {
+      const response = await fetch(
+        `${API_URL}/api/stories/generate`,
+        {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -92,26 +99,44 @@ export default function PhantomApp() {
             character: character.trim(),
             fear,
           }),
-        });
-
-        const data = await readJsonResponse(response);
-
-        if (
-          typeof data.title !== 'string' ||
-          typeof data.content !== 'string' ||
-          !data.title.trim() ||
-          !data.content.trim()
-        ) {
-          throw new Error('The server response did not contain a valid story.');
         }
+      );
 
-        setStory({ title: data.title, content: data.content });
-        setIsExample(false);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Could not generate a story.');
-      } finally {
-        setLoading(false);
+      const data = await readJsonResponse(response);
+
+      if (
+        typeof data.title !== 'string' ||
+        typeof data.content !== 'string' ||
+        !data.title.trim() ||
+        !data.content.trim()
+      ) {
+        throw new Error(
+          'The server response did not contain a valid story.'
+        );
       }
+
+      setStory({
+        title: data.title,
+        content: data.content,
+      });
+
+      setIsExample(false);
+    } catch (err) {
+      if (err instanceof TypeError) {
+        setError(
+          'Could not connect to the backend. Check the backend URL, CORS settings, and server status.'
+        );
+      } else {
+        setError(
+          err instanceof Error
+            ? err.message
+            : 'Could not generate a story.'
+        );
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
 
   async function handleCopy() {
     if (!story) return;
@@ -122,15 +147,23 @@ export default function PhantomApp() {
       await navigator.clipboard.writeText(text);
       setCopyMessage('Story copied!');
     } catch {
-      setCopyMessage('Clipboard access failed. Please copy the story manually.');
+      setCopyMessage(
+        'Clipboard access failed. Please copy the story manually.'
+      );
     }
   }
 
   return (
     <div className="app-container" id="home">
       <header className="site-header">
-        <a className="brand" href="#home" aria-label="Phantom Tales home">
-          <span className="brand-ghost" aria-hidden="true">👻</span>
+        <a
+          className="brand"
+          href="#home"
+          aria-label="Phantom Tales home"
+        >
+          <span className="brand-ghost" aria-hidden="true">
+            👻
+          </span>
           <span>Phantom Tales</span>
         </a>
 
@@ -142,10 +175,16 @@ export default function PhantomApp() {
       </header>
 
       <section className="hero" id="about">
-        <div className="hero-ghost" aria-hidden="true">👻</div>
-        <p className="eyebrow">A LITTLE SOMETHING FROM THE OTHER SIDE</p>
+        <div className="hero-ghost" aria-hidden="true">
+          👻
+        </div>
+        <p className="eyebrow">
+          A LITTLE SOMETHING FROM THE OTHER SIDE
+        </p>
         <h1>Phantom Tales</h1>
-        <p className="hero-subtitle">AI-powered ghost story generator</p>
+        <p className="hero-subtitle">
+          AI-powered ghost story generator
+        </p>
         <p className="hero-description">
           Enter a few details and let the spirits weave a story...
         </p>
@@ -162,7 +201,9 @@ export default function PhantomApp() {
                 id="location"
                 name="location"
                 value={location}
-                onChange={(event) => setLocation(event.target.value)}
+                onChange={(event) =>
+                  setLocation(event.target.value)
+                }
                 placeholder="e.g. an old hostel"
                 maxLength={150}
                 required
@@ -178,7 +219,9 @@ export default function PhantomApp() {
                 id="character"
                 name="character"
                 value={character}
-                onChange={(event) => setCharacter(event.target.value)}
+                onChange={(event) =>
+                  setCharacter(event.target.value)
+                }
                 placeholder="e.g. a college student"
                 maxLength={150}
                 required
@@ -190,6 +233,7 @@ export default function PhantomApp() {
 
             <fieldset className="fear-group">
               <legend>Fear Level</legend>
+
               <div className="fear-options">
                 {fearOptions.map((option) => (
                   <label
@@ -205,18 +249,33 @@ export default function PhantomApp() {
                       checked={fear === option.value}
                       onChange={() => setFear(option.value)}
                     />
-                    <span className="fear-indicator" aria-hidden="true" />
-                    <span className="fear-title">{option.label}</span>
-                    <span className="fear-subtitle">{option.subtitle}</span>
+
+                    <span
+                      className="fear-indicator"
+                      aria-hidden="true"
+                    />
+                    <span className="fear-title">
+                      {option.label}
+                    </span>
+                    <span className="fear-subtitle">
+                      {option.subtitle}
+                    </span>
                   </label>
                 ))}
               </div>
             </fieldset>
 
-            <button className="generate-btn" type="submit" disabled={loading}>
+            <button
+              className="generate-btn"
+              type="submit"
+              disabled={loading}
+            >
               {loading ? (
                 <>
-                  <span className="spinner" aria-hidden="true" />
+                  <span
+                    className="spinner"
+                    aria-hidden="true"
+                  />
                   The spirits are gathering...
                 </>
               ) : (
@@ -225,14 +284,20 @@ export default function PhantomApp() {
             </button>
 
             {error && (
-              <p className="error-msg" role="alert">{error}</p>
+              <p className="error-msg" role="alert">
+                {error}
+              </p>
             )}
           </form>
         </section>
 
-        <section className="panel story-panel" aria-live="polite">
+        <section
+          className="panel story-panel"
+          aria-live="polite"
+        >
           <div className="story-header">
             <h2>📖 Your Ghost Story</h2>
+
             <button
               className="copy-btn"
               type="button"
@@ -244,25 +309,40 @@ export default function PhantomApp() {
           </div>
 
           {isExample && (
-            <p className="example-label">EXAMPLE STORY · NOT AI-GENERATED</p>
+            <p className="example-label">
+              EXAMPLE STORY · NOT AI-GENERATED
+            </p>
           )}
 
           {story && (
             <article className="story-content">
               <h3>{story.title}</h3>
-              <div className="story-divider" aria-hidden="true">✧ ── ✧</div>
+
+              <div
+                className="story-divider"
+                aria-hidden="true"
+              >
+                ✧ ── ✧
+              </div>
+
               <p className="story-text">{story.content}</p>
             </article>
           )}
 
           {copyMessage && (
-            <p className="copy-message" role="status">{copyMessage}</p>
+            <p className="copy-message" role="status">
+              {copyMessage}
+            </p>
           )}
         </section>
       </main>
 
-      <section className="suggestions" aria-label="Suggested locations">
+      <section
+        className="suggestions"
+        aria-label="Suggested locations"
+      >
         <p>✦ Try these ideas:</p>
+
         <div className="suggestion-list">
           {suggestions.map((suggestion) => (
             <button
