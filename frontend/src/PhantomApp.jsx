@@ -76,35 +76,42 @@ export default function PhantomApp() {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/stories/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          location: location.trim(),
-          character: character.trim(),
-          fear
-        })
-      });
+        const API_URL = import.meta.env.VITE_API_URL;
 
-      const data = await readJsonResponse(response);
+        if (!API_URL) {
+          throw new Error('Backend URL is not configured.');
+        }
 
-      if (
-        typeof data.title !== 'string' ||
-        typeof data.content !== 'string' ||
-        !data.title.trim() ||
-        !data.content.trim()
-      ) {
-        throw new Error('The server response did not contain a valid story.');
+        const response = await fetch(`${API_URL}/api/stories/generate`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            location: location.trim(),
+            character: character.trim(),
+            fear,
+          }),
+        });
+
+        const data = await readJsonResponse(response);
+
+        if (
+          typeof data.title !== 'string' ||
+          typeof data.content !== 'string' ||
+          !data.title.trim() ||
+          !data.content.trim()
+        ) {
+          throw new Error('The server response did not contain a valid story.');
+        }
+
+        setStory({ title: data.title, content: data.content });
+        setIsExample(false);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Could not generate a story.');
+      } finally {
+        setLoading(false);
       }
-
-      setStory({ title: data.title, content: data.content });
-      setIsExample(false);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Could not generate a story.');
-    } finally {
-      setLoading(false);
-    }
-  }
 
   async function handleCopy() {
     if (!story) return;
